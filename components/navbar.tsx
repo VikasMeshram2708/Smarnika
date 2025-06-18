@@ -51,7 +51,7 @@ export default async function Navbar() {
                   "use server";
                   await signIn("google", {
                     redirect: true,
-                    callbackUrl: "/workspace",
+                    redirectTo: "/workspace",
                   });
                 }}
               >
