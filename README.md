@@ -1,4 +1,4 @@
-# Smarnika - AI-Enhanced Personal Knowledge Management Platform [https://smarnika.vercel.app]
+# Smarnika - AI-Enhanced Personal Knowledge Management Platform
 
 ## Overview
 
