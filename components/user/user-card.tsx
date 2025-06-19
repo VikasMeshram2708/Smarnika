@@ -12,7 +12,6 @@ import { Badge } from "../ui/badge";
 import { Check, Dot, LogOut, Plus, Settings, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
 

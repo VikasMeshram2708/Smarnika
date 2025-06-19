@@ -33,10 +33,9 @@ import { wsSidebarCollections, wsSidebarDdata } from "@/data";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function WsSidebar() {
-  const { userId } = await auth();
   const user = await currentUser();
   return (
     <Sidebar>

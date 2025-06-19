@@ -1,8 +1,4 @@
-import {
-  Sidebar,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import WsNavbar from "@/components/workspace/ws-navbar";
 import { WsSidebar } from "@/components/workspace/ws-sidebar";
 import React from "react";
