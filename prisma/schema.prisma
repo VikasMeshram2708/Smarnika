@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -14,27 +8,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  BASIC
-}
+model Page {
+  id String @id @default(uuid()) @map("_id")
 
-model User {
-  id    String  @id @default(uuid()) @map("_id")
-  email String  @unique
-  name  String?
-  image String?
+  userId   String
+  parentId String? // for nested pages or sub-pages
 
-  // verification
-  isVerified Boolean @default(false)
+  title   String
+  cover   String? // url of the cover image
+  logo    String? // emoji for the logo
+  content String?
 
-  // role
-  role Role @default(BASIC)
+  // relations
+  parent   Page?  @relation("PageChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Page[] @relation("PageChildren")
+
+  comment Comment[]
 
   // timestamps
-  lastLogin DateTime? @default(now())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("users")
+  // indexing
+  @@index([parentId])
+  @@index([createdAt])
+  // mapping
+  @@map("page")
+}
+
+model Comment {
+  id      String @id @default(uuid()) @map("_id")
+  content String
+
+  // relations
+  page   Page   @relation(fields: [pageId], references: [id])
+  pageId String
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // indexing
+  @@index([pageId])
+  @@index([createdAt])
+  // mapping
+  @@map("comment")
 }

@@ -2,9 +2,6 @@ import {
   CalendarPlus,
   ChevronsUpDown,
   HelpCircle,
-  Plus,
-  Settings,
-  Trash2,
   UserPlus,
 } from "lucide-react";
 
@@ -29,14 +26,29 @@ import {
 } from "../ui/dropdown-menu";
 
 import UserCard from "../user/user-card";
-import { wsSidebarCollections, wsSidebarDdata } from "@/data";
+import { wsDefaultPages } from "@/data";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import WsAddPageBtn from "./ws-add-page-btn";
+import prisma from "@/utils/prisma";
+import WsPrivatePagesList from "./ws-sidebar/ws-private-pages-list";
+import WsMainNavigation from "./ws-sidebar/ws-main-navigation";
+import WsDefaultActions from "./ws-sidebar/ws-default-actions";
 
 export async function WsSidebar() {
+  const { userId } = await auth();
   const user = await currentUser();
+  const privatePages = await prisma.page.findMany({
+    where: {
+      userId: userId ?? "",
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+  });
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -64,39 +76,20 @@ export async function WsSidebar() {
       </SidebarHeader>
       <SidebarContent>
         {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupContent className="p-2">
-            <SidebarMenu>
-              {wsSidebarDdata.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.href}>
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <WsMainNavigation />
 
         {/* Private Collections */}
         <SidebarGroup>
           <SidebarGroupLabel>Private</SidebarGroupLabel>
-          <SidebarGroupAction>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Plus className="cursor-pointer w-5 h-5 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Add a Plage Inside</p>
-              </TooltipContent>
-            </Tooltip>
+          <SidebarGroupAction asChild>
+            <WsAddPageBtn />
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
-              {wsSidebarCollections.map((sb) => (
+              {/* private pages */}
+              <WsPrivatePagesList privatePages={privatePages ?? []} />
+              {/* Default Pages */}
+              {wsDefaultPages.map((sb) => (
                 <SidebarMenuItem key={sb.label}>
                   <SidebarMenuButton asChild>
                     <Link href={sb.href}>
@@ -111,26 +104,7 @@ export async function WsSidebar() {
         </SidebarGroup>
 
         {/* Default Actions */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/workspace/settings">
-                    <Settings />
-                    Settings
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuButton asChild>
-                  <Link href="/workspace/trash">
-                    <Trash2 />
-                    Trash
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <WsDefaultActions />
       </SidebarContent>
       <SidebarFooter>
         <SidebarGroupContent>
