@@ -11,12 +11,12 @@ export default function ProtectedLayout({
   return (
     <SidebarProvider>
       <WsSidebar />
-      <main className="flex flex-col gap-2">
+      <main className="w-full flex flex-col gap-2">
         <div className="flex items-center">
           <SidebarTrigger />
           <WsNavbar />
         </div>
-        {children}
+        <div className="">{children}</div>
       </main>
     </SidebarProvider>
   );

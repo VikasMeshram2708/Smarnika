@@ -42,12 +42,12 @@ export const wsSidebarDdata: IWsSidebarData[] = [
 ];
 
 // private ws-sidebar collections
-interface IWsSidebarCollections {
+interface IWsDefaultPages {
   label: string;
   href: string;
   icon: React.ReactNode | string;
 }
-export const wsSidebarCollections: IWsSidebarCollections[] = [
+export const wsDefaultPages: IWsDefaultPages[] = [
   {
     label: "Weekly",
     href: "/workspace/weekly",
