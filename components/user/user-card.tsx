@@ -8,28 +8,30 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
-import { auth, signOut } from "@/auth";
 import { Badge } from "../ui/badge";
 import { Check, Dot, LogOut, Plus, Settings, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
+import Link from "next/link";
+import { currentUser } from "@clerk/nextjs/server";
+import { SignOutButton } from "@clerk/nextjs";
 
 export default async function UserCard() {
-  const session = await auth();
+  const user = await currentUser();
   return (
     <Card className="w-full bg-card">
       <CardHeader className="border-b">
         <div className="flex flex-col gap-4">
           <div className="flex justify-start gap-2">
             <Image
-              src={session?.user?.image || ""}
-              alt={session?.user?.name?.charAt(0) || "U"}
+              src={user?.imageUrl || ""}
+              alt={user?.fullName?.charAt(0) || "U"}
               width={32}
               height={24}
               className="rounded-full h-10 w-10"
             />
             <div className="flex flex-col">
-              <CardTitle>{session?.user?.name ?? "Name"} Smarnika</CardTitle>
+              <CardTitle>{user?.fullName ?? "Name"} Smarnika</CardTitle>
               <CardDescription className="flex items-center">
                 Free Plan
                 <span className="flex items-center gap-1">
@@ -51,16 +53,12 @@ export default async function UserCard() {
         </div>
       </CardHeader>
       <CardContent className="space-y-2 flex flex-col items-start">
-        <CardDescription>
-          {session?.user?.name ?? "name"} Smarnika
-        </CardDescription>
+        <CardDescription>{user?.fullName ?? "name"} Smarnika</CardDescription>
         <div className="p-2 hover:bg-secondary flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Avatar>
-            <AvatarFallback>
-              {session?.user?.name?.charAt(0) ?? "U"}
-            </AvatarFallback>
+            <AvatarFallback>{user?.fullName?.charAt(0) ?? "U"}</AvatarFallback>
           </Avatar>
-          <p className="text-xs">{session?.user?.name} Smarnika</p>
+          <p className="text-xs">{user?.fullName} Smarnika</p>
           <span className="text-xs text-muted-foreground">
             <Check className="w-5 h-5" />
           </span>
@@ -69,20 +67,13 @@ export default async function UserCard() {
           <Plus className="w-5 h-5" />
           New Workspace
         </Button>
-        <form
-          action={async () => {
-            "use server";
-            await signOut({
-              redirect: true,
-              redirectTo: "/",
-            });
-          }}
-        >
+
+        <SignOutButton>
           <Button variant={"ghost"}>
             <LogOut className="w-5 h-5" />
             Logout
           </Button>
-        </form>
+        </SignOutButton>
       </CardContent>
       <CardFooter className="border-t">
         <p className="text-xs text-muted-foreground">

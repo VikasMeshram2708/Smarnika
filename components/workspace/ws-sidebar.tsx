@@ -22,7 +22,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { auth } from "@/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,9 +33,11 @@ import { wsSidebarCollections, wsSidebarDdata } from "@/data";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export async function WsSidebar() {
-  const session = await auth();
+  const { userId } = await auth();
+  const user = await currentUser();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -46,12 +47,12 @@ export async function WsSidebar() {
               <DropdownMenuTrigger className="flex items-center gap-2" asChild>
                 <SidebarMenuButton>
                   <Image
-                    src={session?.user?.image || ""}
-                    alt={session?.user?.name?.charAt(0) || "U"}
+                    src={user?.imageUrl || ""}
+                    alt={user?.fullName?.charAt(0) || "U"}
                     width={20}
                     height={20}
                   />
-                  <p className="text-sm font-medium">{session?.user?.name}</p>
+                  <p className="text-sm font-medium">{user?.fullName}</p>
                   <ChevronsUpDown />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
