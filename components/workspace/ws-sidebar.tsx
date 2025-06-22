@@ -1,9 +1,4 @@
-import {
-  CalendarPlus,
-  ChevronsUpDown,
-  HelpCircle,
-  UserPlus,
-} from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 
 import {
   Sidebar,
@@ -28,9 +23,8 @@ import {
 import UserCard from "../user/user-card";
 import { wsDefaultPages } from "@/data";
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { currentUser } from "@clerk/nextjs/server";
-import WsAddPageBtn from "./ws-add-page-btn";
+import WsAddPageBtnWrapper from "./ws-add-page-btn-wrapper";
 import WsPrivatePagesList from "./ws-sidebar/ws-private-pages-list";
 import WsMainNavigation from "./ws-sidebar/ws-main-navigation";
 import WsDefaultActions from "./ws-sidebar/ws-default-actions";
@@ -45,7 +39,7 @@ async function PrivatePagesSection() {
     <SidebarGroup>
       <SidebarGroupLabel>Private</SidebarGroupLabel>
       <SidebarGroupAction>
-        <WsAddPageBtn />
+        <WsAddPageBtnWrapper />
       </SidebarGroupAction>
       <SidebarGroupContent>
         <SidebarMenu>
@@ -70,13 +64,22 @@ async function PrivatePagesSection() {
 
 export async function WsSidebar() {
   const user = await currentUser();
-
   return (
     <Sidebar>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
+          <SidebarMenuItem className="border-b">
+            <h2 className="flex items-center gap-2 text-2xl font-semibold">
+              <Image
+                src="https://ik.imagekit.io/wciw9sobc/Smarnika/dark-logo.png?updatedAt=1750589675718"
+                alt="Smarnika AI-powered personal knowledge management"
+                width={32}
+                height={32}
+                className="rounded w-10 h-10 object-cover object-center"
+              />
+              Smarnika
+            </h2>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-2" asChild>
                 <SidebarMenuButton>
                   <Image
@@ -92,7 +95,7 @@ export async function WsSidebar() {
               <DropdownMenuContent className="w-80 border-0 shadow-none p-0 ml-5">
                 <UserCard />
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -121,23 +124,25 @@ export async function WsSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/workspace/settings">
-                  <UserPlus />
-                  Invite Members
-                </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2" asChild>
+              <SidebarMenuButton className="p-5">
+                <Image
+                  src={user?.imageUrl || ""}
+                  alt={user?.fullName?.charAt(0) || "U"}
+                  width={32}
+                  height={32}
+                  className="rounded-full w-8 h-8 object-cover object-center"
+                />
+                <p className="text-sm font-medium">{user?.fullName}</p>
+                <ChevronsUpDown />
               </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80 border-0 shadow-none p-0 ml-5">
+              <UserCard />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </SidebarGroupContent>
-        <div className="flex items-center gap-2 justify-between">
-          <Button variant={"ghost"} size={"icon"}>
-            <CalendarPlus />
-          </Button>
-          <HelpCircle />
-        </div>
       </SidebarFooter>
     </Sidebar>
   );
