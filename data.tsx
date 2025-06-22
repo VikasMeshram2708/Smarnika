@@ -1,4 +1,4 @@
-import { AlignJustify, CalendarDays, House, Inbox, Search } from "lucide-react";
+import { House, Inbox, Search } from "lucide-react";
 
 // navbar navlinks
 interface iDropdownNavLink {

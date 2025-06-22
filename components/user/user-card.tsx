@@ -9,7 +9,7 @@ import {
 } from "../ui/card";
 import Image from "next/image";
 import { Badge } from "../ui/badge";
-import { Check, Dot, LogOut, Plus, Settings, UserPlus } from "lucide-react";
+import { Check, Dot, LogOut, Settings, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { currentUser } from "@clerk/nextjs/server";
@@ -62,10 +62,6 @@ export default async function UserCard() {
             <Check className="w-5 h-5" />
           </span>
         </div>
-        <Button variant={"ghost"}>
-          <Plus className="w-5 h-5" />
-          New Workspace
-        </Button>
 
         <SignOutButton>
           <Button variant={"ghost"}>
