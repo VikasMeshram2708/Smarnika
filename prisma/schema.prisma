@@ -17,7 +17,7 @@ model Page {
   title   String
   cover   String? // url of the cover image
   logo    String? // emoji for the logo
-  content String?
+  content Json?
 
   // relations
   parent   Page?  @relation("PageChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)

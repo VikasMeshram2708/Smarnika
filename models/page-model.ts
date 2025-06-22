@@ -16,3 +16,11 @@ export const commentSchema = z.object({
 });
 
 export type CommentSchema = z.infer<typeof commentSchema>;
+
+// delete page schema
+
+export const deletePageSchema = z.object({
+  pageId: z.uuid(),
+});
+
+export type DeletePageSchema = z.infer<typeof deletePageSchema>;

@@ -48,16 +48,16 @@ interface IWsDefaultPages {
   icon: React.ReactNode | string;
 }
 export const wsDefaultPages: IWsDefaultPages[] = [
-  {
-    label: "Weekly",
-    href: "/workspace/weekly",
-    icon: <AlignJustify />,
-  },
-  {
-    label: "Monthly",
-    href: "/workspace/monthly",
-    icon: <CalendarDays />,
-  },
+  // {
+  //   label: "Weekly",
+  //   href: "/workspace/weekly",
+  //   icon: <AlignJustify />,
+  // },
+  // {
+  //   label: "Monthly",
+  //   href: "/workspace/monthly",
+  //   icon: <CalendarDays />,
+  // },
   {
     label: "Welcome to Smarnika",
     href: "/workspace/welcome",

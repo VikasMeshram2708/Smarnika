@@ -1,5 +1,10 @@
-import { Brain, UserCircle, UserPlus } from "lucide-react";
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { Brain, UserCircle, UserPlus, Loader2 } from "lucide-react";
+import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
+
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -7,64 +12,96 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import Image from "next/image";
-import { dropDownNavLinks } from "@/data";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
-export default async function Navbar() {
-  const session = await auth();
-  const user = await currentUser();
+import { dropDownNavLinks } from "@/data";
+
+const LoadingIndicator = () => (
+  <Button variant="ghost" size="sm" disabled className="gap-2">
+    <Loader2 className="h-4 w-4 animate-spin" />
+    Loading…
+  </Button>
+);
+
+const SignedInMenu = ({
+  user,
+}: {
+  user: NonNullable<ReturnType<typeof useUser>["user"]>;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" size="sm" className="flex items-center gap-2">
+        <Image
+          src={user.imageUrl || "/default-avatar.png"}
+          alt={user.fullName || "User"}
+          width={24}
+          height={24}
+          className="rounded-full"
+        />
+        <span className="max-w-[120px] truncate">{user.fullName}</span>
+      </Button>
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent align="end">
+      {dropDownNavLinks.map((item) => (
+        <DropdownMenuItem key={item.label} asChild>
+          <Link
+            href={item.href}
+            prefetch={item.href === "/workspace"}
+            onMouseEnter={() => {
+              // Preload workspace route on hover for better performance
+              if (item.href === "/workspace") {
+                import("@/app/(protected)/workspace/page");
+              }
+            }}
+          >
+            {item.label}
+          </Link>
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
+const GuestMenu = () => (
+  <div className="flex items-center gap-2">
+    <SignInButton mode="modal">
+      <Button variant="link" className="flex items-center gap-1">
+        <UserCircle className="h-4 w-4" />
+        Sign In
+      </Button>
+    </SignInButton>
+    <SignUpButton mode="modal">
+      <Button className="flex items-center gap-1">
+        <UserPlus className="h-4 w-4" />
+        Sign Up
+      </Button>
+    </SignUpButton>
+  </div>
+);
+
+export default function Navbar() {
+  const { user, isLoaded, isSignedIn } = useUser();
+
   return (
-    <nav className="bg-background p-3">
-      <div className="max-w-3xl lg:max-w-7xl mx-auto">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl text-primary font-semibold flex items-center gap-2">
-            <Brain />
-            <Link href="/">Smarnika</Link>
-          </h2>
-          <div>
-            {session && session.userId ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant={"ghost"} size={"sm"}>
-                    {/* <UserCircle /> */}
-                    <Image
-                      src={user?.imageUrl || ""}
-                      alt={user?.fullName || ""}
-                      width={20}
-                      height={20}
-                      className="rounded-full"
-                    />
-                    {user?.fullName}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {dropDownNavLinks.map((d) => (
-                    <DropdownMenuItem key={d.label}>
-                      <Link href={d.href}>{d.label}</Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="flex items-center gap-2">
-                <SignInButton>
-                  <Button variant={"link"}>
-                    <UserCircle />
-                    Sign In
-                  </Button>
-                </SignInButton>
-                <SignUpButton>
-                  <Button>
-                    <UserPlus />
-                    Sign Up
-                  </Button>
-                </SignUpButton>
-              </div>
-            )}
-          </div>
-        </div>
+    <nav className="bg-background p-4 border-b">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        {/* Brand */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-2xl font-semibold text-primary"
+        >
+          <Brain className="h-6 w-6" />
+          Smarnika
+        </Link>
+
+        {/* Right-hand section */}
+        {!isLoaded ? (
+          <LoadingIndicator />
+        ) : isSignedIn && user ? (
+          <SignedInMenu user={user} />
+        ) : (
+          <GuestMenu />
+        )}
       </div>
     </nav>
   );

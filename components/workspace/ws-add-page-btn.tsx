@@ -1,6 +1,7 @@
 /**
  * This is the button to add a new page
  */
+"use client";
 
 import { Plus } from "lucide-react";
 import {
@@ -11,30 +12,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Card, CardContent } from "../ui/card";
-import WsPageForm from "./ws-page-form";
+
+import WsEditor from "./ws-editor";
+import { useState } from "react";
 
 export default function WsAddPageBtn() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function handleOpenChange(toggleState: boolean) {
+    if (toggleState) {
+      setIsOpen(toggleState);
+    } else {
+      setIsOpen((prev) => !prev);
+    }
+  }
   return (
     <div>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <button>
-            <Plus className="cursor-pointer w-5 h-5 text-muted-foreground" />
-          </button>
+          <Plus className="cursor-pointer w-5 h-5 text-muted-foreground" />
         </DialogTrigger>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader className="hidden">
             <DialogTitle>Add a new page</DialogTitle>
             <DialogDescription>
               Create a new page to organize your thoughts and ideas.
             </DialogDescription>
           </DialogHeader>
-          <Card className="p-0 border-0 shadow-none bg-card">
-            <CardContent className="p-0">
-              <WsPageForm />
-            </CardContent>
-          </Card>
+          <WsEditor handleOpenChange={handleOpenChange} />
         </DialogContent>
       </Dialog>
     </div>
