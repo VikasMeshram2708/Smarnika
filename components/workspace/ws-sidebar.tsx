@@ -21,8 +21,6 @@ import {
 } from "../ui/dropdown-menu";
 
 import UserCard from "../user/user-card";
-import { wsDefaultPages } from "@/data";
-import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import WsAddPageBtnWrapper from "./ws-add-page-btn-wrapper";
 import WsPrivatePagesList from "./ws-sidebar/ws-private-pages-list";
@@ -46,16 +44,6 @@ async function PrivatePagesSection() {
           {/* private pages */}
           <WsPrivatePagesList privatePages={privatePages ?? []} />
           {/* Default Pages */}
-          {wsDefaultPages.map((sb) => (
-            <SidebarMenuItem key={sb.label}>
-              <SidebarMenuButton asChild>
-                <Link href={sb.href}>
-                  {sb.icon}
-                  <span>{sb.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
@@ -66,36 +54,19 @@ export async function WsSidebar() {
   const user = await currentUser();
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="border-b-2">
         <SidebarMenu>
-          <SidebarMenuItem className="border-b">
+          <SidebarMenuItem>
             <h2 className="flex items-center gap-2 text-2xl font-semibold">
               <Image
                 src="https://ik.imagekit.io/wciw9sobc/Smarnika/dark-logo.png?updatedAt=1750589675718"
                 alt="Smarnika AI-powered personal knowledge management"
                 width={32}
                 height={32}
-                className="rounded w-10 h-10 object-cover object-center"
+                className="rounded w-8 h-8 object-cover object-center"
               />
               Smarnika
             </h2>
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2" asChild>
-                <SidebarMenuButton>
-                  <Image
-                    src={user?.imageUrl || ""}
-                    alt={user?.fullName?.charAt(0) || "U"}
-                    width={20}
-                    height={20}
-                  />
-                  <p className="text-sm font-medium">{user?.fullName}</p>
-                  <ChevronsUpDown />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 border-0 shadow-none p-0 ml-5">
-                <UserCard />
-              </DropdownMenuContent>
-            </DropdownMenu> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -122,7 +93,7 @@ export async function WsSidebar() {
         {/* Default Actions */}
         <WsDefaultActions />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t-2">
         <SidebarGroupContent>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2" asChild>
