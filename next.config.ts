@@ -5,7 +5,6 @@ const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -18,6 +17,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // External packages for server components
+  serverExternalPackages: ["@prisma/client"],
 };
 
 export default nextConfig;

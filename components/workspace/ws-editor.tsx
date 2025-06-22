@@ -1,0 +1,104 @@
+"use client";
+
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
+
+import { BlockNoteView } from "@blocknote/mantine";
+import { useCreateBlockNote } from "@blocknote/react";
+import { useEffect, useState } from "react";
+import { addPage } from "@/app/dal/page-action";
+
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+/**
+ * Helper that guarantees we always pass a string to `toast.*`.
+ * If the backend returns an object (e.g. zod validation errors),
+ * we stringify it to avoid the TS2345 error.
+ */
+function toString(msg: unknown): string {
+  return typeof msg === "string" ? msg : JSON.stringify(msg);
+}
+
+interface WsEditorProps {
+  handleOpenChange: (toggleState: boolean) => void;
+}
+
+export default function WsEditor({ handleOpenChange }: WsEditorProps) {
+  const editor = useCreateBlockNote();
+
+  const [title, setTitle] = useState("Untitled");
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Mark the document as dirty whenever the content changes.
+  useEffect(() => {
+    if (!editor) return;
+    const off = editor.onChange(() => setHasChanges(true));
+    return () => off?.();
+  }, [editor]);
+
+  const handleSave = async () => {
+    if (!editor || isSaving) return;
+
+    setIsSaving(true);
+    const payload = {
+      title: title.trim() || "Untitled",
+      content: JSON.stringify(editor.document),
+    };
+
+    try {
+      // NOTE: the return type is assumed; adjust if your DAL returns something different.
+      const res: { success: boolean; message?: unknown } = await addPage(
+        payload
+      );
+      if (!res?.success) {
+        toast.error(toString(res?.message ?? "Failed to save"));
+        return;
+      }
+
+      toast.success(toString(res?.message ?? "Saved"));
+      setHasChanges(false);
+      handleOpenChange(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (!editor) return null;
+
+  return (
+    <div className="space-y-4">
+      {/* Title input & Save button */}
+      <div className="flex items-center gap-2">
+        <input
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setHasChanges(true);
+          }}
+          type="text"
+          placeholder="Untitled"
+          className="flex-1 border-0 text-2xl font-bold text-muted-foreground shadow-none outline-none"
+        />
+        <Button
+          onClick={handleSave}
+          disabled={isSaving || !hasChanges}
+          className="shrink-0"
+        >
+          {isSaving ? "Saving…" : hasChanges ? "Save" : "Saved"}
+        </Button>
+      </div>
+
+      {/* Editor */}
+      <BlockNoteView
+        editor={editor}
+        theme="light"
+        className="min-h-[70svh] h-full w-full"
+      />
+    </div>
+  );
+}
