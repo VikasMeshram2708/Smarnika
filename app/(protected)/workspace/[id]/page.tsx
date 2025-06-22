@@ -1,6 +1,3 @@
-/* ------------------------------------------------------------------
-   app/(protected)/workspace/[id]/page.tsx  – SERVER COMPONENT
------------------------------------------------------------------- */
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,9 +5,37 @@ import Image from "next/image";
 import { ChevronDown, MoreHorizontal, MessageSquare } from "lucide-react";
 import prisma from "@/utils/prisma";
 import { PartialBlock } from "@blocknote/core";
+import {
+  safeJsonParse,
+  decompressContent,
+  getContentSize,
+} from "@/utils/content-optimizer";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import ClientReadOnlyBlockNote from "@/components/workspace/ws-pages/ws-pages-readonly";
+import { Metadata } from "next";
+
+export async function generateStaticParams() {
+  const pages = await prisma.page.findMany({
+    select: { id: true },
+  });
+  return pages.map((page) => ({ id: page.id }));
+}
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const page = await prisma.page.findUnique({
+    where: { id: decodeURIComponent(id) },
+    select: { title: true },
+  });
+  return {
+    title: `${page?.title} – Smarnika`,
+    description: `Explore ${page?.title} in Smarnika, your AI-powered second brain.`,
+  };
+}
 
 export default async function DetailedPage({
   params,
@@ -26,9 +51,16 @@ export default async function DetailedPage({
 
   if (!page) return notFound();
 
-  const content: PartialBlock[] = page.content
-    ? JSON.parse(page.content as string)
-    : [];
+  // Optimize content parsing with decompression
+  const rawContent = page.content as string;
+  const decompressedContent = decompressContent(rawContent);
+  const content: PartialBlock[] = safeJsonParse(decompressedContent, []);
+
+  // Log content size for monitoring (server-side)
+  if (rawContent) {
+    const contentSize = getContentSize(rawContent);
+    console.log(`Loading content with size: ${contentSize}`);
+  }
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {

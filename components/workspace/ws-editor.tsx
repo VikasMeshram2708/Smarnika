@@ -5,8 +5,14 @@ import "@blocknote/mantine/style.css";
 
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { addPage } from "@/app/dal/page-action";
+import {
+  optimizeJsonStringify,
+  compressContent,
+  getContentSize,
+} from "@/utils/content-optimizer";
+import { logContentSize } from "@/components/ui/performance-monitor";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -38,20 +44,37 @@ export default function WsEditor({ handleOpenChange }: WsEditorProps) {
     return () => off?.();
   }, [editor]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!editor || isSaving) return;
 
     setIsSaving(true);
-    const payload = {
-      title: title.trim() || "Untitled",
-      content: JSON.stringify(editor.document),
-    };
+    const startTime = performance.now();
 
     try {
+      // Optimize content serialization
+      const jsonContent = optimizeJsonStringify(editor.document);
+      const compressedContent = compressContent(jsonContent);
+
+      // Log content size for monitoring
+      const contentSize = getContentSize(compressedContent);
+      console.log(`Saving content with size: ${contentSize}`);
+
+      const payload = {
+        title: title.trim() || "Untitled",
+        content: compressedContent,
+      };
+
       // NOTE: the return type is assumed; adjust if your DAL returns something different.
       const res: { success: boolean; message?: unknown } = await addPage(
         payload
       );
+
+      const endTime = performance.now();
+      const loadTime = endTime - startTime;
+
+      // Log performance metrics
+      logContentSize(contentSize, loadTime);
+
       if (!res?.success) {
         toast.error(toString(res?.message ?? "Failed to save"));
         return;
@@ -66,7 +89,7 @@ export default function WsEditor({ handleOpenChange }: WsEditorProps) {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [editor, isSaving, title, handleOpenChange]);
 
   if (!editor) return null;
 

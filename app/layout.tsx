@@ -16,8 +16,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smarnika",
-  description: "Your intelligent workspace",
+  title:
+    "Smarnika – Personal Knowledge Management with AI | Organize Your Digital Brain",
+  description:
+    "Smarnika is an AI-powered personal knowledge management app that helps you capture, organize, and retrieve information seamlessly. Boost your productivity with smart, connected knowledge.",
+  keywords: [
+    "personal knowledge management",
+    "personal knowledge management app",
+    "AI note-taking app",
+    "PKM app",
+    "second brain app",
+    "second brain software",
+    "AI productivity tool",
+    "AI productivity app",
+    "note taking app with AI",
+    "zettelkasten app",
+    "AI note organizer",
+    "digital garden tool",
+    "knowledge management software",
+    "connected thoughts app",
+    "smart note-taking system",
+    "idea management tool",
+    "AI tool for organizing notes",
+    "build a second brain",
+    "best PKM app",
+    "AI-powered notetaking",
+    "note-taking for researchers",
+    "personal knowledge base",
+    "Smarnika app",
+    "Smarnika second brain",
+    "Smarnika knowledge management",
+    "top PKM tools with AI",
+  ],
+  openGraph: {
+    title: "Smarnika – Your AI-Powered Second Brain",
+    description:
+      "Capture, organize, and retrieve information with AI. Boost productivity with Smarnika's intelligent knowledge system.",
+  },
 };
 
 export default function RootLayout({
