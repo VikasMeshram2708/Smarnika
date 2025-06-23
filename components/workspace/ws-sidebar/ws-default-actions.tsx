@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Settings, Trash2 } from "lucide-react";
+import { Settings } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -19,12 +19,6 @@ export default function WsDefaultActions() {
               <Link href="/workspace/settings">
                 <Settings />
                 Settings
-              </Link>
-            </SidebarMenuButton>
-            <SidebarMenuButton asChild>
-              <Link href="/workspace/trash">
-                <Trash2 />
-                Trash
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

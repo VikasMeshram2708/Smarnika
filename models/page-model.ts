@@ -10,13 +10,6 @@ export const pageSchema = z.object({
 
 export type PageSchema = z.infer<typeof pageSchema>;
 
-// comment schema
-export const commentSchema = z.object({
-  content: z.string().min(1),
-});
-
-export type CommentSchema = z.infer<typeof commentSchema>;
-
 // delete page schema
 
 export const deletePageSchema = z.object({

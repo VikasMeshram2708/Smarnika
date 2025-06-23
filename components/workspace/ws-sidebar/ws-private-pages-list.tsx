@@ -9,11 +9,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Ellipsis, Folder, Forward, Frame, LoaderCircle } from "lucide-react";
+import { Ellipsis, Folder, Frame, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import WsDeletePageBtn from "./ws-delete-page-btn";
 import { MinimalPage } from "@/utils/fetch-private-pages";
+import WsShareBtn from "./ws-share-btn";
 
 export default async function WsPrivatePagesList({
   privatePages,
@@ -43,13 +44,14 @@ export default async function WsPrivatePagesList({
                 <Ellipsis />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Folder className="h-4 w-4" />
-                  <span>View</span>
+                <DropdownMenuItem asChild>
+                  <Link href={`/workspace/${page.id}`}>
+                    <Folder className="h-4 w-4" />
+                    <span>View</span>
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="h-4 w-4" />
-                  <span>Share</span>
+                <DropdownMenuItem asChild>
+                  <WsShareBtn pageId={page.id ?? ""} />
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <WsDeletePageBtn pageId={page.id ?? ""} />
