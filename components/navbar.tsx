@@ -1,19 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Brain, UserCircle, UserPlus, Loader2 } from "lucide-react";
 import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-
-import { dropDownNavLinks } from "@/data";
 
 const LoadingIndicator = () => (
   <Button variant="ghost" size="sm" disabled className="gap-2">
@@ -22,44 +13,12 @@ const LoadingIndicator = () => (
   </Button>
 );
 
-const SignedInMenu = ({
-  user,
-}: {
-  user: NonNullable<ReturnType<typeof useUser>["user"]>;
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="sm" className="flex items-center gap-2">
-        <Image
-          src={user.imageUrl || "/default-avatar.png"}
-          alt={user.fullName || "User"}
-          width={24}
-          height={24}
-          className="rounded-full"
-        />
-        <span className="max-w-[120px] truncate">{user.fullName}</span>
-      </Button>
-    </DropdownMenuTrigger>
-
-    <DropdownMenuContent align="end">
-      {dropDownNavLinks.map((item) => (
-        <DropdownMenuItem key={item.label} asChild>
-          <Link
-            href={item.href}
-            prefetch={item.href === "/workspace"}
-            onMouseEnter={() => {
-              // Preload workspace route on hover for better performance
-              if (item.href === "/workspace") {
-                import("@/app/(protected)/workspace/page");
-              }
-            }}
-          >
-            {item.label}
-          </Link>
-        </DropdownMenuItem>
-      ))}
-    </DropdownMenuContent>
-  </DropdownMenu>
+const SignedInMenu = () => (
+  <Link href="/workspace">
+    <Button variant="link" size="sm" className="cursor-pointer">
+      Continue to Workspace
+    </Button>
+  </Link>
 );
 
 const GuestMenu = () => (
@@ -98,7 +57,7 @@ export default function Navbar() {
         {!isLoaded ? (
           <LoadingIndicator />
         ) : isSignedIn && user ? (
-          <SignedInMenu user={user} />
+          <SignedInMenu />
         ) : (
           <GuestMenu />
         )}

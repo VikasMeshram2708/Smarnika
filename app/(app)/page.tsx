@@ -141,12 +141,14 @@ export default function LandingPage() {
           {[
             "Forbes",
             "TechCrunch",
-            "WSJ",
             "Nature",
             "Harvard",
             "MIT",
             "Stanford",
             "The Economist",
+            "Bloomberg",
+            "Y Combinator",
+            "Fast Company",
           ].map((logo, i) => (
             <div
               key={i}

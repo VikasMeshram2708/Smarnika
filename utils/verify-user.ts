@@ -1,18 +1,22 @@
-import "server-only";
-
 /**
  * This file contains the functions to verify the user
  */
+import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { cache } from "react";
+import { redirect } from "next/navigation";
 
 export const verifyUser = cache(async () => {
-  const { userId } = await auth();
+  try {
+    const { userId } = await auth();
 
-  if (!userId) {
-    redirect("/sign-in");
+    if (!userId) {
+      redirect("/");
+    }
+    return userId;
+  } catch (error) {
+    console.error("Error verifying user", error);
+    throw new Error("You must be signed in to use this feature");
   }
-  return userId;
 });

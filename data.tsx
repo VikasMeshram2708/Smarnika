@@ -1,20 +1,23 @@
-import { House, Inbox, Search } from "lucide-react";
+import { BriefcaseBusiness, House, Search, Settings } from "lucide-react";
 
 // navbar navlinks
-interface iDropdownNavLink {
-  label: string;
-  href: string;
-}
-export const dropDownNavLinks: iDropdownNavLink[] = [
-  {
-    label: "Workspace",
-    href: "/workspace",
-  },
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-  },
-];
+// interface iDropdownNavLink {
+//   label: string;
+//   href: string;
+//   icon: React.ReactNode;
+// }
+// export const dropDownNavLinks: iDropdownNavLink[] = [
+//   {
+//     label: "Workspace",
+//     href: "/workspace",
+//     icon: <BriefcaseBusiness />,
+//   },
+//   {
+//     label: "Settings",
+//     href: "/workspace/settings",
+//     icon: <Settings />,
+//   },
+// ];
 
 // sidebar top actons buttons
 
@@ -31,14 +34,14 @@ export const wsSidebarDdata: IWsSidebarData[] = [
   },
   {
     label: "Home",
-    href: "/workspace",
+    href: "/",
     icon: <House />,
   },
-  {
-    label: "Inbox",
-    href: "/workspace/inbox",
-    icon: <Inbox />,
-  },
+  // {
+  //   label: "Inbox",
+  //   href: "/workspace/inbox",
+  //   icon: <Inbox />,
+  // },
 ];
 
 // private ws-sidebar collections

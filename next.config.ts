@@ -23,29 +23,6 @@ const nextConfig: NextConfig = {
   },
   // External packages for server components
   serverExternalPackages: ["@prisma/client"],
-
-  // Webpack optimization for large strings
-  webpack: (config, { dev, isServer }) => {
-    // Optimize caching for large strings
-    if (!dev) {
-      config.cache = {
-        ...config.cache,
-        type: "filesystem",
-        compression: "gzip",
-        maxAge: 172800000, // 2 days
-      };
-    }
-
-    // Optimize module resolution
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      net: false,
-      tls: false,
-    };
-
-    return config;
-  },
 };
 
 export default nextConfig;

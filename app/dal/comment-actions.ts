@@ -1,53 +1,39 @@
-/**
- * This file contains the actions for the page collection
- */
 "use server";
 
-import {
-  deletePageSchema,
-  DeletePageSchema,
-  pageSchema,
-  PageSchema,
-} from "@/models/page-model";
+import { commentSchema, CommentSchema } from "@/models/comment-model";
 import prisma from "@/utils/prisma";
 import { verifyUser } from "@/utils/verify-user";
 import { revalidatePath } from "next/cache";
 import assert from "node:assert";
 import z from "zod/v4";
 
-// Create new Page
-export async function addPage(incData: PageSchema & { id?: string }) {
+// Create a comment
+export async function createComment(incData: CommentSchema) {
   try {
-    // auth check
     const userId = await verifyUser();
     // sanitize
-    const parsed = pageSchema.safeParse(incData);
+    const parsed = commentSchema.safeParse(incData);
     if (!parsed.success) {
       return {
         success: false,
-        message: z.flattenError(parsed.error).fieldErrors,
+        message: z.flattenError(parsed.error).fieldErrors.content,
       };
     }
-    const { title, content, cover, logo } = parsed.data;
 
+    const { content, pageId } = parsed.data;
     assert(userId, "Unauthorized");
-
-    // save to db using upsert
-    await prisma.page.create({
+    await prisma.comment.create({
       data: {
-        title,
         content,
-        cover,
-        logo,
-        userId: userId as string,
+        pageId,
       },
     });
 
     // revalidate
-    revalidatePath("/workspace");
+    revalidatePath(`/workspace/${pageId}`);
     return {
       success: true,
-      message: "Page Created",
+      message: "Commented successfully",
     };
   } catch (error) {
     const err = (error as Error).message ?? "Something went wrong";
@@ -62,33 +48,20 @@ export async function addPage(incData: PageSchema & { id?: string }) {
   }
 }
 
-// Delete page
-export async function deletePage(incData: DeletePageSchema) {
+// Delete a comment
+export async function deleteComment(commentId: string) {
   try {
-    // auth check
     const userId = await verifyUser();
-    // sanitize
-    const parsed = deletePageSchema.safeParse(incData);
-    if (!parsed.success) {
-      return {
-        success: false,
-        message: z.flattenError(parsed.error).fieldErrors.pageId,
-      };
-    }
-    const { pageId } = parsed.data;
-
     assert(userId, "Unauthorized");
-
-    // delete page
-    await prisma.page.delete({
-      where: { id: pageId, userId: userId as string },
+    await prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
     });
-
-    // revalidate
-    revalidatePath("/workspace");
+    revalidatePath(`/workspace/:path`);
     return {
       success: true,
-      message: "Page Deleted",
+      message: "Comment deleted successfully",
     };
   } catch (error) {
     const err = (error as Error).message ?? "Something went wrong";

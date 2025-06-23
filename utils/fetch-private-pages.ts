@@ -1,3 +1,5 @@
+import "server-only";
+
 import { cache } from "react";
 import prisma from "./prisma";
 import { verifyUser } from "./verify-user";
@@ -16,7 +18,7 @@ export const fetchPrivatePages = cache(async (): Promise<Page[]> => {
 
     const privatePages = await prisma.page.findMany({
       where: {
-        userId: userId,
+        userId: userId as string,
       },
       orderBy: {
         updatedAt: "desc", // Changed to updatedAt for better UX
@@ -44,7 +46,7 @@ export const fetchMinimalPrivatePages = cache(
 
       const privatePages = await prisma.page.findMany({
         where: {
-          userId: userId,
+          userId: userId as string,
         },
         orderBy: {
           updatedAt: "desc",
@@ -64,3 +66,20 @@ export const fetchMinimalPrivatePages = cache(
     }
   }
 );
+
+// find the page by id
+export const findPageById = cache(async (id: string): Promise<Page | null> => {
+  try {
+    const page = await prisma.page.findUnique({
+      where: { id: decodeURIComponent(id) },
+      include: { comment: true, children: true },
+    });
+    if (!page) {
+      return null;
+    }
+    return page;
+  } catch (error) {
+    console.error("Error fetching minimal private pages:", error);
+    throw new Error("Error fetching page");
+  }
+});
