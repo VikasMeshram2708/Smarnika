@@ -14,31 +14,30 @@ import "@blocknote/mantine/style.css";
 import ClientReadOnlyBlockNote from "@/components/workspace/ws-pages/ws-pages-readonly";
 import { Metadata } from "next";
 import Comment from "@/components/comments/comment";
-import {
-  fetchMinimalPrivatePages,
-  findPageById,
-} from "@/utils/fetch-private-pages";
 import { Suspense } from "react";
 import WsShareBtn from "@/components/workspace/ws-sidebar/ws-share-btn";
 import prisma from "@/utils/prisma";
-import { verifyUser } from "@/utils/verify-user";
 
 export async function generateStaticParams() {
-  const pages = await fetchMinimalPrivatePages();
+  const pages = await prisma.page.findMany({
+    select: {
+      id: true,
+    },
+  });
 
   return pages.map((page) => ({ id: page.id }));
 }
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const userId = await verifyUser();
 
+  // use prisma
   const page = await prisma.page.findUnique({
-    where: { id, userId },
-    include: { comment: true, children: true },
+    where: { id },
   });
 
   return {
@@ -54,7 +53,9 @@ export default async function DetailedPage({
 }) {
   const { id } = await params;
 
-  const page = await findPageById(id);
+  const page = await prisma.page.findUnique({
+    where: { id },
+  });
 
   if (!page) return notFound();
 
