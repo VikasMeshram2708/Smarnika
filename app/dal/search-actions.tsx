@@ -4,14 +4,18 @@
 "use server";
 
 import prisma from "@/utils/prisma";
+import { verifyUser } from "@/utils/verify-user";
 
 export const searchPages = async (searchText: string) => {
   try {
+    const userId = await verifyUser();
+
     if (!searchText.trim()) return;
 
     const pages = await prisma.page.findMany({
       where: {
         title: { contains: searchText, mode: "insensitive" },
+        userId: userId,
       },
     });
     // console.log("pages", pages);

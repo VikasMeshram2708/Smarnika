@@ -32,7 +32,7 @@ export default function WsAddPageBtn() {
         <DialogTrigger asChild>
           <Plus className="cursor-pointer w-5 h-5 text-muted-foreground" />
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="overflow-y-auto">
           <DialogHeader className="hidden">
             <DialogTitle>Add a new page</DialogTitle>
             <DialogDescription>

@@ -28,12 +28,22 @@ function toString(msg: unknown): string {
 
 interface WsEditorProps {
   handleOpenChange: (toggleState: boolean) => void;
+  initialTitle?: string;
+  initialContent?: any;
+  onSave?: (data: { title: string; content: string }) => Promise<any>;
 }
 
-export default function WsEditor({ handleOpenChange }: WsEditorProps) {
-  const editor = useCreateBlockNote();
+export default function WsEditor({
+  handleOpenChange,
+  initialTitle = "Untitled",
+  initialContent,
+  onSave,
+}: WsEditorProps) {
+  const editor = useCreateBlockNote(
+    initialContent ? { initialContent } : undefined
+  );
 
-  const [title, setTitle] = useState("Untitled");
+  const [title, setTitle] = useState(initialTitle);
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -64,10 +74,13 @@ export default function WsEditor({ handleOpenChange }: WsEditorProps) {
         content: compressedContent,
       };
 
-      // NOTE: the return type is assumed; adjust if your DAL returns something different.
-      const res: { success: boolean; message?: unknown } = await addPage(
-        payload
-      );
+      let res;
+      if (onSave) {
+        res = await onSave(payload);
+      } else {
+        // Default: create new page
+        res = await addPage(payload);
+      }
 
       const endTime = performance.now();
       const loadTime = endTime - startTime;
@@ -89,7 +102,7 @@ export default function WsEditor({ handleOpenChange }: WsEditorProps) {
     } finally {
       setIsSaving(false);
     }
-  }, [editor, isSaving, title, handleOpenChange]);
+  }, [editor, isSaving, title, handleOpenChange, onSave]);
 
   if (!editor) return null;
 

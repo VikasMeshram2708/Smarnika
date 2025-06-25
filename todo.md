@@ -9,6 +9,18 @@ We'll not use realtime db because there is no two way communication happening. I
 
 ## Future Features
 
+:TODO: Bug fix
+
+- [ ] Ownership bug fix for edit and update actions.
+
+- [ ] Search Page: results are showing from all the users not from a individual user.
+
+- [ ] Fix: the mobile version the add button not working on sidebar its not clickable.
+
+- [ ] Add: Edit feature for comments and pages.
+
+- [ ] Remove the redirect while on individual private page.
+
 - [ ] Add rate limiting feature on server actions.
 
 - [x] Add more names in hero section client companies

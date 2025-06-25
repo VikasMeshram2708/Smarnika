@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -8,8 +7,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
-import { Badge } from "../ui/badge";
-import { Check, Dot, LogOut, Settings, UserPlus } from "lucide-react";
+import { Check, Dot, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { currentUser } from "@clerk/nextjs/server";
@@ -39,20 +37,9 @@ export default async function UserCard() {
               </CardDescription>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge>
-              <Settings />
-              Settings
-            </Badge>
-            <Badge>
-              <UserPlus />
-              Invite Members
-            </Badge>
-          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-2 flex flex-col items-start">
-        <CardDescription>{user?.fullName ?? "name"} Smarnika</CardDescription>
         <div className="p-2 hover:bg-secondary flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Avatar>
             <AvatarFallback>{user?.fullName?.charAt(0) ?? "U"}</AvatarFallback>

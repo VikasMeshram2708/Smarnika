@@ -1,6 +1,7 @@
 "use client";
 
-import { BlockNoteViewRaw, useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/mantine";
+import { useCreateBlockNote } from "@blocknote/react";
 import { PartialBlock } from "@blocknote/core";
 import { useEffect } from "react";
 import { logContentSize } from "@/components/ui/performance-monitor";
@@ -25,7 +26,7 @@ export default function ClientReadOnlyBlockNote({
 
   if (!editor) return null;
   return (
-    <BlockNoteViewRaw
+    <BlockNoteView
       editor={editor}
       editable={false}
       theme="light"
