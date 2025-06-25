@@ -17,6 +17,7 @@ import Comment from "@/components/comments/comment";
 import { Suspense } from "react";
 import WsShareBtn from "@/components/workspace/ws-sidebar/ws-share-btn";
 import prisma from "@/utils/prisma";
+import ClientEditDialog from "@/components/workspace/ws-pages/client-edit-dialog";
 
 export async function generateStaticParams() {
   const pages = await prisma.page.findMany({
@@ -91,6 +92,16 @@ export default async function DetailedPage({
           <WsShareBtn pageId={page.id ?? ""} />
         </div>
       </header>
+
+      {/* EDIT DIALOG BUTTON */}
+      <div className="container max-w-4xl mx-auto px-4 pt-4 flex justify-end">
+        {/* Client-side Edit Dialog */}
+        <ClientEditDialog
+          pageId={page.id}
+          initialTitle={page.title}
+          initialContent={content}
+        />
+      </div>
 
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Cover & Info */}

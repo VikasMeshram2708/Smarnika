@@ -5,7 +5,7 @@ import { type Comment } from "@/lib/generated/prisma";
 import { fetchComments } from "@/utils/fetch-comments";
 import { currentUser } from "@clerk/nextjs/server";
 import CommentForm from "./comment-form";
-import DeleteComment from "./delete-comment";
+import CommentActions from "./delete-comment";
 
 export default async function Comment({ pageId }: { pageId: string }) {
   const comments = await fetchComments(pageId);
@@ -36,7 +36,10 @@ export default async function Comment({ pageId }: { pageId: string }) {
                     {formatDate(new Date(comment.createdAt))}
                   </span>
                   <span className="text-sm font-medium">
-                    <DeleteComment commentId={comment.id} />
+                    <CommentActions
+                      commentId={comment.id}
+                      initialContent={comment.content}
+                    />
                   </span>
                 </div>
                 <p className="text-sm">{comment.content}</p>

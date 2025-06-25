@@ -75,3 +75,30 @@ export async function deleteComment(commentId: string) {
     };
   }
 }
+
+// Update a comment
+export async function updateComment(commentId: string, content: string) {
+  try {
+    const userId = await verifyUser();
+    assert(userId, "Unauthorized");
+    const updated = await prisma.comment.update({
+      where: { id: commentId },
+      data: { content },
+    });
+    revalidatePath(`/workspace/${updated.pageId}`);
+    return {
+      success: true,
+      message: "Comment updated successfully",
+    };
+  } catch (error) {
+    const err = (error as Error).message ?? "Something went wrong";
+    return {
+      success: false,
+      message: err,
+      stack:
+        process.env.NODE_ENV === "development"
+          ? (error as Error).stack
+          : "no stack trace found",
+    };
+  }
+}
